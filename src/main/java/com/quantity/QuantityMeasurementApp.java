@@ -2,32 +2,24 @@ package com.quantity;
 
 import java.util.Objects;
 
+/**
+ * QuantityMeasurementApp
+ *
+ * UC1–UC8 Integrated
+ * - Equality
+ * - Conversion
+ * - Addition (implicit target)
+ * - Addition (explicit target)
+ *
+ * LengthUnit is now standalone (UC8).
+ */
 public class QuantityMeasurementApp {
 
     private static final double TOLERANCE = 1e-6;
 
-    public enum LengthUnit {
-
-        FEET(1.0),
-        INCH(1.0 / 12.0),
-        YARD(3.0),
-        CENTIMETER(0.0328084167); // 1 cm in feet
-
-        private final double conversionFactorToFeet;
-
-        LengthUnit(double conversionFactorToFeet) {
-            this.conversionFactorToFeet = conversionFactorToFeet;
-        }
-
-        public double toFeet(double value) {
-            return value * conversionFactorToFeet;
-        }
-
-        public double fromFeet(double feetValue) {
-            return feetValue / conversionFactorToFeet;
-        }
-    }
-
+    /**
+     * Immutable Value Object for Length.
+     */
     public static class QuantityLength {
 
         private final double value;
@@ -56,9 +48,12 @@ public class QuantityMeasurementApp {
         }
 
         private double convertToBase() {
-            return unit.toFeet(value);
+            return unit.convertToBaseUnit(value);
         }
 
+        /**
+         * Convert this length to another unit.
+         */
         public QuantityLength convertTo(LengthUnit targetUnit) {
 
             if (targetUnit == null) {
@@ -66,22 +61,21 @@ public class QuantityMeasurementApp {
             }
 
             double baseValue = convertToBase();
-            double converted = targetUnit.fromFeet(baseValue);
+            double converted = targetUnit.convertFromBaseUnit(baseValue);
 
             return new QuantityLength(converted, targetUnit);
         }
 
-        // UC6 - implicit target (first operand unit)
+        /**
+         * UC6 – Add using first operand unit as target.
+         */
         public QuantityLength add(QuantityLength other) {
-
-            if (other == null) {
-                throw new IllegalArgumentException("Second operand cannot be null");
-            }
-
             return add(other, this.unit);
         }
 
-        // UC7 - explicit target unit
+        /**
+         * UC7 – Add with explicit target unit.
+         */
         public QuantityLength add(QuantityLength other, LengthUnit targetUnit) {
 
             if (other == null) {
@@ -96,7 +90,7 @@ public class QuantityMeasurementApp {
                     this.convertToBase() + other.convertToBase();
 
             double resultValue =
-                    targetUnit.fromFeet(sumInBase);
+                    targetUnit.convertFromBaseUnit(sumInBase);
 
             return new QuantityLength(resultValue, targetUnit);
         }
@@ -125,6 +119,9 @@ public class QuantityMeasurementApp {
         }
     }
 
+    /**
+     * Static conversion utility (UC5).
+     */
     public static double convert(double value,
                                  LengthUnit source,
                                  LengthUnit target) {
@@ -137,7 +134,7 @@ public class QuantityMeasurementApp {
             throw new IllegalArgumentException("Units cannot be null");
         }
 
-        double baseValue = source.toFeet(value);
-        return target.fromFeet(baseValue);
+        double baseValue = source.convertToBaseUnit(value);
+        return target.convertFromBaseUnit(baseValue);
     }
 }
