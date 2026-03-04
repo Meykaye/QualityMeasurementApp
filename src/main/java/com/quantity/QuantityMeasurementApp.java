@@ -1,28 +1,39 @@
 package com.quantity;
 
-import com.quantity.weight.*;
-import com.quantity.length.*;
+import com.quantity.model.Quantity;
+import com.quantity.unit.LengthUnit;
+import com.quantity.unit.WeightUnit;
 
 public class QuantityMeasurementApp {
 
     public static void main(String[] args) {
 
-        QuantityWeight w1 =
-                new QuantityWeight(1.0, WeightUnit.KILOGRAM);
+        Quantity<LengthUnit> length1 =
+                new Quantity<>(1.0, LengthUnit.FEET);
 
-        QuantityWeight w2 =
-                new QuantityWeight(1000.0, WeightUnit.GRAM);
+        Quantity<LengthUnit> length2 =
+                new Quantity<>(12.0, LengthUnit.INCHES);
 
-        System.out.println(w1.equals(w2));
+        System.out.println(length1.equals(length2));
 
-        QuantityWeight sum =
-                w1.add(w2, WeightUnit.GRAM);
+        System.out.println(length1.convertTo(LengthUnit.INCHES));
 
-        System.out.println(sum);
+        System.out.println(
+                length1.add(length2, LengthUnit.FEET)
+        );
 
-        QuantityWeight converted =
-                w1.convertTo(WeightUnit.POUND);
+        Quantity<WeightUnit> weight1 =
+                new Quantity<>(1.0, WeightUnit.KILOGRAM);
 
-        System.out.println(converted);
+        Quantity<WeightUnit> weight2 =
+                new Quantity<>(1000.0, WeightUnit.GRAM);
+
+        System.out.println(weight1.equals(weight2));
+
+        System.out.println(weight1.convertTo(WeightUnit.GRAM));
+
+        System.out.println(
+                weight1.add(weight2, WeightUnit.KILOGRAM)
+        );
     }
 }
