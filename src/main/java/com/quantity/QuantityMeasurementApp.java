@@ -10,93 +10,71 @@ public class QuantityMeasurementApp {
 
     public static void main(String[] args) {
 
-        // LENGTH DEMO
-        System.out.println("----- LENGTH OPERATIONS -----");
+        System.out.println("----- SUBTRACTION -----");
 
-        Quantity<LengthUnit> length1 =
-                new Quantity<>(1.0, LengthUnit.FEET);
+        Quantity<LengthUnit> lengthA =
+                new Quantity<>(10.0, LengthUnit.FEET);
 
-        Quantity<LengthUnit> length2 =
-                new Quantity<>(12.0, LengthUnit.INCHES);
+        Quantity<LengthUnit> lengthB =
+                new Quantity<>(6.0, LengthUnit.INCHES);
 
-        demonstrateEquality(length1, length2);
-        demonstrateConversion(length1, LengthUnit.INCHES);
-        demonstrateAddition(length1, length2, LengthUnit.FEET);
+        demonstrateSubtraction(lengthA, lengthB, LengthUnit.FEET);
+        demonstrateSubtraction(lengthA, lengthB, LengthUnit.INCHES);
 
 
-        // WEIGHT DEMO
-        System.out.println("\n----- WEIGHT OPERATIONS -----");
+        System.out.println("\n----- DIVISION -----");
+
+        Quantity<LengthUnit> lengthC =
+                new Quantity<>(24.0, LengthUnit.INCHES);
+
+        Quantity<LengthUnit> lengthD =
+                new Quantity<>(2.0, LengthUnit.FEET);
+
+        demonstrateDivision(lengthC, lengthD);
+
+
+        System.out.println("\n----- WEIGHT DIVISION -----");
 
         Quantity<WeightUnit> weight1 =
-                new Quantity<>(1.0, WeightUnit.KILOGRAM);
+                new Quantity<>(10.0, WeightUnit.KILOGRAM);
 
         Quantity<WeightUnit> weight2 =
-                new Quantity<>(1000.0, WeightUnit.GRAM);
+                new Quantity<>(5.0, WeightUnit.KILOGRAM);
 
-        demonstrateEquality(weight1, weight2);
-        demonstrateConversion(weight1, WeightUnit.GRAM);
-        demonstrateAddition(weight1, weight2, WeightUnit.KILOGRAM);
+        demonstrateDivision(weight1, weight2);
 
 
-        // VOLUME DEMO
-        System.out.println("\n----- VOLUME OPERATIONS -----");
+        System.out.println("\n----- VOLUME SUBTRACTION -----");
 
-        Quantity<VolumeUnit> volume1 =
-                new Quantity<>(1.0, VolumeUnit.LITRE);
+        Quantity<VolumeUnit> v1 =
+                new Quantity<>(5.0, VolumeUnit.LITRE);
 
-        Quantity<VolumeUnit> volume2 =
-                new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
+        Quantity<VolumeUnit> v2 =
+                new Quantity<>(500.0, VolumeUnit.MILLILITRE);
 
-        Quantity<VolumeUnit> volume3 =
-                new Quantity<>(1.0, VolumeUnit.GALLON);
-
-        demonstrateEquality(volume1, volume2);
-        demonstrateConversion(volume1, VolumeUnit.MILLILITRE);
-        demonstrateAddition(volume1, volume2, VolumeUnit.LITRE);
-        demonstrateAddition(volume1, volume3, VolumeUnit.LITRE);
+        demonstrateSubtraction(v1, v2, VolumeUnit.LITRE);
     }
 
-
-    // GENERIC EQUALITY DEMONSTRATION
-    public static <U extends IMeasurable> void demonstrateEquality(
-            Quantity<U> q1,
-            Quantity<U> q2) {
-
-        System.out.println(
-                q1 + " equals " + q2 + " -> " + q1.equals(q2)
-        );
-    }
-
-
-    // GENERIC CONVERSION DEMONSTRATION
-    public static <U extends IMeasurable> void demonstrateConversion(
-            Quantity<U> quantity,
-            U targetUnit) {
-
-        Quantity<U> converted =
-                quantity.convertTo(targetUnit);
-
-        System.out.println(
-                quantity + " converted to "
-                        + targetUnit + " -> "
-                        + converted
-        );
-    }
-
-
-    // GENERIC ADDITION DEMONSTRATION
-    public static <U extends IMeasurable> void demonstrateAddition(
+    public static <U extends IMeasurable> void demonstrateSubtraction(
             Quantity<U> q1,
             Quantity<U> q2,
             U targetUnit) {
 
-        Quantity<U> result =
-                q1.add(q2, targetUnit);
+        Quantity<U> result = q1.subtract(q2, targetUnit);
 
         System.out.println(
-                q1 + " + " + q2 +
-                        " in " + targetUnit +
-                        " -> " + result
+                q1 + " - " + q2 + " in " + targetUnit + " -> " + result
+        );
+    }
+
+    public static <U extends IMeasurable> void demonstrateDivision(
+            Quantity<U> q1,
+            Quantity<U> q2) {
+
+        double result = q1.divide(q2);
+
+        System.out.println(
+                q1 + " / " + q2 + " -> " + result
         );
     }
 }

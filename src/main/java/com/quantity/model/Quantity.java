@@ -35,16 +35,16 @@ public final class Quantity<U extends IMeasurable> {
         return unit.convertToBaseUnit(value);
     }
 
-    public Quantity<U> convertTo(U targetUnit) {
+    private void validate(Quantity<U> other) {
 
-        if (targetUnit == null)
-            throw new IllegalArgumentException("Target unit cannot be null");
+        if (other == null)
+            throw new IllegalArgumentException("Quantity cannot be null");
 
-        double base = toBaseUnit();
-        double converted = targetUnit.convertFromBaseUnit(base);
-
-        return new Quantity<>(converted, targetUnit);
+        if (!unit.getClass().equals(other.unit.getClass()))
+            throw new IllegalArgumentException("Different measurement categories");
     }
+
+    // ---------------- ADD ----------------
 
     public Quantity<U> add(Quantity<U> other) {
         return add(other, this.unit);
@@ -52,24 +52,69 @@ public final class Quantity<U extends IMeasurable> {
 
     public Quantity<U> add(Quantity<U> other, U targetUnit) {
 
-        if (other == null)
-            throw new IllegalArgumentException("Quantity cannot be null");
+        validate(other);
 
         if (targetUnit == null)
             throw new IllegalArgumentException("Target unit cannot be null");
 
-        if (!unit.getClass().equals(other.unit.getClass()))
-            throw new IllegalArgumentException("Different measurement categories");
+        double baseSum = this.toBaseUnit() + other.toBaseUnit();
 
-        double sumBase =
-                this.toBaseUnit() +
-                        other.toBaseUnit();
-
-        double result =
-                targetUnit.convertFromBaseUnit(sumBase);
+        double result = targetUnit.convertFromBaseUnit(baseSum);
 
         return new Quantity<>(result, targetUnit);
     }
+
+    // ---------------- SUBTRACT ----------------
+
+    public Quantity<U> subtract(Quantity<U> other) {
+        return subtract(other, this.unit);
+    }
+
+    public Quantity<U> subtract(Quantity<U> other, U targetUnit) {
+
+        validate(other);
+
+        if (targetUnit == null)
+            throw new IllegalArgumentException("Target unit cannot be null");
+
+        double baseResult = this.toBaseUnit() - other.toBaseUnit();
+
+        double result = targetUnit.convertFromBaseUnit(baseResult);
+
+        result = Math.round(result * 100.0) / 100.0;
+
+        return new Quantity<>(result, targetUnit);
+    }
+
+    // ---------------- DIVIDE ----------------
+
+    public double divide(Quantity<U> other) {
+
+        validate(other);
+
+        double divisor = other.toBaseUnit();
+
+        if (divisor == 0)
+            throw new ArithmeticException("Division by zero");
+
+        return this.toBaseUnit() / divisor;
+    }
+
+    // ---------------- CONVERT ----------------
+
+    public Quantity<U> convertTo(U targetUnit) {
+
+        if (targetUnit == null)
+            throw new IllegalArgumentException("Target unit cannot be null");
+
+        double base = toBaseUnit();
+
+        double converted = targetUnit.convertFromBaseUnit(base);
+
+        return new Quantity<>(converted, targetUnit);
+    }
+
+    // ---------------- EQUALS ----------------
 
     @Override
     public boolean equals(Object obj) {
