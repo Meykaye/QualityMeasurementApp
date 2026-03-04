@@ -1,7 +1,6 @@
 package com.quantity.model;
 
 import com.quantity.unit.IMeasurable;
-
 import java.util.Objects;
 import java.util.function.DoubleBinaryOperator;
 
@@ -37,9 +36,9 @@ public final class Quantity<U extends IMeasurable> {
     }
 
     /*
-     * ------------------------------
-     * ENUM FOR ARITHMETIC OPERATIONS
-     * ------------------------------
+     ----------------------------------
+     Arithmetic Operation Enum (UC13)
+     ----------------------------------
      */
     private enum ArithmeticOperation {
 
@@ -65,9 +64,9 @@ public final class Quantity<U extends IMeasurable> {
     }
 
     /*
-     * ------------------------------
-     * CENTRALIZED VALIDATION
-     * ------------------------------
+     ----------------------------------
+     Centralized Validation (UC13)
+     ----------------------------------
      */
     private void validateArithmeticOperands(
             Quantity<U> other,
@@ -88,13 +87,17 @@ public final class Quantity<U extends IMeasurable> {
     }
 
     /*
-     * ------------------------------
-     * CORE ARITHMETIC HELPER
-     * ------------------------------
+     ----------------------------------
+     Centralized Arithmetic Logic
+     ----------------------------------
      */
     private double performBaseArithmetic(
             Quantity<U> other,
             ArithmeticOperation operation) {
+
+        /* UC14 Validation for unsupported operations */
+        this.unit.validateOperationSupport(operation.name());
+        other.unit.validateOperationSupport(operation.name());
 
         double baseValue1 = this.toBaseUnit();
         double baseValue2 = other.toBaseUnit();
@@ -103,10 +106,11 @@ public final class Quantity<U extends IMeasurable> {
     }
 
     /*
-     * ------------------------------
-     * ADD
-     * ------------------------------
+     ----------------------------------
+     ADD
+     ----------------------------------
      */
+
     public Quantity<U> add(Quantity<U> other) {
 
         validateArithmeticOperands(other, null, false);
@@ -130,10 +134,11 @@ public final class Quantity<U extends IMeasurable> {
     }
 
     /*
-     * ------------------------------
-     * SUBTRACT
-     * ------------------------------
+     ----------------------------------
+     SUBTRACT
+     ----------------------------------
      */
+
     public Quantity<U> subtract(Quantity<U> other) {
 
         validateArithmeticOperands(other, null, false);
@@ -157,10 +162,11 @@ public final class Quantity<U extends IMeasurable> {
     }
 
     /*
-     * ------------------------------
-     * DIVIDE
-     * ------------------------------
+     ----------------------------------
+     DIVIDE
+     ----------------------------------
      */
+
     public double divide(Quantity<U> other) {
 
         validateArithmeticOperands(other, null, false);
@@ -169,36 +175,39 @@ public final class Quantity<U extends IMeasurable> {
     }
 
     /*
-     * ------------------------------
-     * CONVERSION
-     * ------------------------------
+     ----------------------------------
+     CONVERSION
+     ----------------------------------
      */
+
     public Quantity<U> convertTo(U targetUnit) {
 
         if (targetUnit == null)
             throw new IllegalArgumentException("Target unit cannot be null");
 
-        double base = toBaseUnit();
+        double baseValue = this.toBaseUnit();
 
-        double converted = targetUnit.convertFromBaseUnit(base);
+        double convertedValue = targetUnit.convertFromBaseUnit(baseValue);
 
-        return new Quantity<>(roundToTwoDecimals(converted), targetUnit);
+        return new Quantity<>(roundToTwoDecimals(convertedValue), targetUnit);
     }
 
     /*
-     * ------------------------------
-     * ROUNDING
-     * ------------------------------
+     ----------------------------------
+     Rounding Helper
+     ----------------------------------
      */
+
     private double roundToTwoDecimals(double value) {
         return Math.round(value * 100.0) / 100.0;
     }
 
     /*
-     * ------------------------------
-     * EQUALITY
-     * ------------------------------
+     ----------------------------------
+     Equality
+     ----------------------------------
      */
+
     @Override
     public boolean equals(Object obj) {
 
@@ -218,11 +227,13 @@ public final class Quantity<U extends IMeasurable> {
 
     @Override
     public int hashCode() {
+
         return Objects.hash(Math.round(toBaseUnit() / EPSILON));
     }
 
     @Override
     public String toString() {
+
         return "Quantity(" + value + ", " + unit.getUnitName() + ")";
     }
 }

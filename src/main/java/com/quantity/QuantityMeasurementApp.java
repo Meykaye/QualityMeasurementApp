@@ -4,77 +4,129 @@ import com.quantity.model.Quantity;
 import com.quantity.unit.LengthUnit;
 import com.quantity.unit.WeightUnit;
 import com.quantity.unit.VolumeUnit;
+import com.quantity.unit.TemperatureUnit;
 import com.quantity.unit.IMeasurable;
 
 public class QuantityMeasurementApp {
 
     public static void main(String[] args) {
 
-        System.out.println("----- SUBTRACTION -----");
+        System.out.println("===== LENGTH OPERATIONS =====");
 
-        Quantity<LengthUnit> lengthA =
-                new Quantity<>(10.0, LengthUnit.FEET);
+        Quantity<LengthUnit> length1 =
+                new Quantity<>(1.0, LengthUnit.FEET);
 
-        Quantity<LengthUnit> lengthB =
-                new Quantity<>(6.0, LengthUnit.INCHES);
+        Quantity<LengthUnit> length2 =
+                new Quantity<>(12.0, LengthUnit.INCHES);
 
-        demonstrateSubtraction(lengthA, lengthB, LengthUnit.FEET);
-        demonstrateSubtraction(lengthA, lengthB, LengthUnit.INCHES);
-
-
-        System.out.println("\n----- DIVISION -----");
-
-        Quantity<LengthUnit> lengthC =
-                new Quantity<>(24.0, LengthUnit.INCHES);
-
-        Quantity<LengthUnit> lengthD =
-                new Quantity<>(2.0, LengthUnit.FEET);
-
-        demonstrateDivision(lengthC, lengthD);
+        demonstrateEquality(length1, length2);
+        demonstrateConversion(length1, LengthUnit.INCHES);
+        demonstrateAddition(length1, length2, LengthUnit.FEET);
 
 
-        System.out.println("\n----- WEIGHT DIVISION -----");
+        System.out.println("\n===== WEIGHT OPERATIONS =====");
 
         Quantity<WeightUnit> weight1 =
-                new Quantity<>(10.0, WeightUnit.KILOGRAM);
+                new Quantity<>(1.0, WeightUnit.KILOGRAM);
 
         Quantity<WeightUnit> weight2 =
-                new Quantity<>(5.0, WeightUnit.KILOGRAM);
+                new Quantity<>(1000.0, WeightUnit.GRAM);
 
-        demonstrateDivision(weight1, weight2);
+        demonstrateEquality(weight1, weight2);
+        demonstrateConversion(weight1, WeightUnit.GRAM);
+        demonstrateAddition(weight1, weight2, WeightUnit.KILOGRAM);
 
 
-        System.out.println("\n----- VOLUME SUBTRACTION -----");
+        System.out.println("\n===== VOLUME OPERATIONS =====");
 
-        Quantity<VolumeUnit> v1 =
-                new Quantity<>(5.0, VolumeUnit.LITRE);
+        Quantity<VolumeUnit> volume1 =
+                new Quantity<>(1.0, VolumeUnit.LITRE);
 
-        Quantity<VolumeUnit> v2 =
-                new Quantity<>(500.0, VolumeUnit.MILLILITRE);
+        Quantity<VolumeUnit> volume2 =
+                new Quantity<>(1000.0, VolumeUnit.MILLILITRE);
 
-        demonstrateSubtraction(v1, v2, VolumeUnit.LITRE);
+        demonstrateEquality(volume1, volume2);
+        demonstrateConversion(volume1, VolumeUnit.MILLILITRE);
+        demonstrateAddition(volume1, volume2, VolumeUnit.LITRE);
+
+
+        System.out.println("\n===== TEMPERATURE OPERATIONS =====");
+
+        Quantity<TemperatureUnit> temp1 =
+                new Quantity<>(0.0, TemperatureUnit.CELSIUS);
+
+        Quantity<TemperatureUnit> temp2 =
+                new Quantity<>(32.0, TemperatureUnit.FAHRENHEIT);
+
+        demonstrateEquality(temp1, temp2);
+
+        demonstrateConversion(temp1, TemperatureUnit.FAHRENHEIT);
+
+        demonstrateUnsupportedArithmetic(temp1, temp2);
     }
 
-    public static <U extends IMeasurable> void demonstrateSubtraction(
+
+    /*
+    --------------------------------
+    GENERIC DEMONSTRATION METHODS
+    --------------------------------
+     */
+
+    public static <U extends IMeasurable> void demonstrateEquality(
+            Quantity<U> q1,
+            Quantity<U> q2) {
+
+        System.out.println(
+                q1 + " == " + q2 + " -> " + q1.equals(q2)
+        );
+    }
+
+
+    public static <U extends IMeasurable> void demonstrateConversion(
+            Quantity<U> quantity,
+            U targetUnit) {
+
+        Quantity<U> converted = quantity.convertTo(targetUnit);
+
+        System.out.println(
+                quantity + " converted to " + targetUnit + " -> " + converted
+        );
+    }
+
+
+    public static <U extends IMeasurable> void demonstrateAddition(
             Quantity<U> q1,
             Quantity<U> q2,
             U targetUnit) {
 
-        Quantity<U> result = q1.subtract(q2, targetUnit);
+        Quantity<U> result = q1.add(q2, targetUnit);
 
         System.out.println(
-                q1 + " - " + q2 + " in " + targetUnit + " -> " + result
+                q1 + " + " + q2 + " in " + targetUnit + " -> " + result
         );
     }
 
-    public static <U extends IMeasurable> void demonstrateDivision(
-            Quantity<U> q1,
-            Quantity<U> q2) {
 
-        double result = q1.divide(q2);
+    /*
+    --------------------------------
+    TEMPERATURE ERROR DEMO
+    --------------------------------
+     */
 
-        System.out.println(
-                q1 + " / " + q2 + " -> " + result
-        );
+    public static void demonstrateUnsupportedArithmetic(
+            Quantity<TemperatureUnit> t1,
+            Quantity<TemperatureUnit> t2) {
+
+        try {
+
+            t1.add(t2);
+
+        } catch (UnsupportedOperationException e) {
+
+            System.out.println(
+                    "Temperature arithmetic not supported: "
+                            + e.getMessage()
+            );
+        }
     }
 }
